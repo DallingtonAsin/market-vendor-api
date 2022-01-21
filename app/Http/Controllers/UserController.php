@@ -333,129 +333,6 @@ public function store(Request $request)
     
 }
 
-/**
-* Store a newly created resource in storage.
-*
-* @param  \Illuminate\Http\Request  $request
-* @return \Illuminate\Http\Response
-*/
-public function stores(Request $request)
-{
-    $resp = new ApiResponse();
-    $method = "UserController@store";
-    
-    try{
-        
-        if($request->filled(['user_id', 'first_name','last_name', 'email', 'mobile_no'])){
-            
-            $user_id = $request->input('user_id');
-            $fname = trim($request->input('first_name'));
-            $lname = trim($request->input('last_name'));
-            $email = trim($request->input('email'));
-            $telno = trim($request->input('mobile_no'));
-            
-            $reg = User::find($user_id);
-            $registra = $reg->first_name." ".$reg->last_name;
-            $name = $fname." ".$lname;
-            $defaultPwd = '12345678';
-            
-            
-            $user = new User();
-            $name = $fname." ".$lname;
-            $username = strtolower(Str::random(6).".".$fname);
-            $bool_userExists = User::where('username' ,$username)->exists();
-            if(!$bool_userExists){
-                
-                $password = Hash::make($defaultPwd, ['rounds' => 12]);
-                $count = User::where('email', '=', $email)->count();
-                if($count == 0){
-                    
-                    $user->first_name = $fname;
-                    $user->last_name = $lname;
-                    $user->username = $username;
-                    $user->email = $email;
-                    $user->phone_number = $telno;
-                    $user->password = $password;
-                    $save_status = $user->save();
-                    if($save_status){
-                        $name = $fname." ".$lname;
-                        $subject = 'Vendor Registration';
-                        $registraPosition = 'Vendor';
-                        $registraEmail = 'info@marketvendor.com';
-                        $default_password = $defaultPwd;
-                        $now = now();
-                        $registeredRole = 'Market Vendor';
-                        $company_name = config('app.company');
-                        $action =  "registered ".$name." as ".$registeredRole."";
-                     
-                        $sendAction = "You have been registered as ".$registeredRole."  at ".$company_name." today at ".$now."";
-                        Helper::logActivity($request, ['name' => $registra, 'role' => 'Admin', 'action' => $action]);
-                        $data = array(
-                            'name' => $name,
-                            'first_name' => $fname,
-                            'last_name' => $lname,
-                            'username' => $username,
-                            'password' => $default_password,
-                            'user_position' => 'user',
-                            'registra' => $registra,
-                            'registraPosition' => $registraPosition,
-                            'registraEmail' => $registraEmail,
-                            'email' => $email,
-                            'subject' => $subject,
-                            'created_at' => $now,
-                            'details' => $sendAction,
-                            'activity' => 'registration',
-                            'company' => $company_name,
-                        );
-                        
-                        if(Helper::is_connectedToInternet() == 1){
-                            \Mail::to($email)->send(new RegistrationMailSender($data));
-                            $message = $action." and email has been sent";
-                            
-                        }else{
-                            $message = $action;
-                        }
-                        
-                        $resp->message = Helper::getMessage('success', $message);
-                        $resp->statusCode = Globals::$STATUS_CODE_SUCCESS;
-                        $resp->data = User::count();
-                    }
-                    else
-                    {
-                        $resp->statusCode = Globals::$STATUS_CODE_FAILED;
-                        $resp->message = "Vendor registration failed!";
-                    }
-                } else{
-                    $message = "Vendor with email ".$email." has been already registered";
-                    $responseInfo = Helper::getMessage('error', $message);
-                    $resp->statusCode = Globals::$STATUS_CODE_FAILED;
-                    $resp->message  = $responseInfo;
-                    
-                }
-                
-                
-            }else{
-                $resp->message = "username ".$username." has already been taken, choose another one";
-                $resp->statusCode = Globals::$STATUS_CODE_FAILED;
-            }
-            
-        } else{
-            $resp->statusCode = Globals::$STATUS_CODE_ERROR;
-            $resp->message = "Unable to process request: missing parameters";
-        }
-        
-    } catch (\Exception $ex) {
-        $resp->statusCode = Globals::$STATUS_CODE_ERROR;
-        $resp->message = $message = $ex->getMessage();
-    }
-    
-    $dataArr = array("code" => $resp->statusCode,
-    "message" => $resp->message,
-    "method" => $method);
-    Helper::LogRequest($request, $dataArr);
-    return response()->json($resp);
-    
-}
 
 /**
 * Display the specified resource.
@@ -488,7 +365,54 @@ public function edit($id)
 */
 public function update(Request $request, $id)
 {
-    //
+    $validator = Validator::make($request->all(), [
+        'user_id' => 'required',
+        'first_name' => 'required',
+        'last_name' => 'required',
+        'phone_number' => 'required',
+        'email' => 'required',
+        'address' => 'required',
+    ]);
+    
+    try{
+        if($validator->fails()){
+            $this->response['statusCode'] = Globals::$STATUS_CODE_ERROR;
+            $this->response['message'] = $validator->errors()->all();
+        }else{
+            
+            $author_id = $request->input('user_id');
+            $first_name = $request->input('first_name');
+            $last_name = $request->input('last_name');
+            $phone_number = $request->input('phone_number');
+            $email = $request->input('email');
+            $address = $request->input('address');
+            $user = User::find($id);
+            $names = Helper::getUserNames($id);
+            
+            $user->first_name = $first_name;
+            $user->last_name = $last_name;
+            $user->email = $email;
+            $user->phone_number = $phone_number;
+            $user->address = $address;
+            
+            if($user->save()){
+                $author = Helper::getUserNames($author_id);
+                $role = Helper::getUserRoleName($author_id);
+                $action = "updated ".$names." details";
+                Helper::logActivity($request, ['name' => $author, 'role' => $role, 'action' => $action]);
+                $this->response['message'] = Helper::getMessage('success', $action);
+                $this->response['statusCode'] = Globals::$STATUS_CODE_SUCCESS;
+            }else{
+                $this->response['message'] ="Unable to update user details!";
+                $this->response['statusCode'] = Globals::$STATUS_CODE_FAILED;
+            }
+        }
+    }catch(\Exception $ex){
+        $this->response['statusCode'] = Globals::$STATUS_CODE_ERROR;
+        $this->response['message'] = $ex->getMessage();
+    }
+    
+    return response()->json($this->response, 200); 
 }
 
 /**
@@ -499,7 +423,43 @@ public function update(Request $request, $id)
 */
 public function destroy($id)
 {
-    //
+    $validator = Validator::make($request->all(), [
+        'user_id' => 'required',
+    ]);
+    
+    try{
+        if($validator->fails()){
+            $this->response['statusCode'] = Globals::$STATUS_CODE_ERROR;
+            $this->response['message'] = $validator->errors()->all();
+        }else{
+            
+            $author_id = $request->input('user_id');
+            $author = Helper::getUserNames($author_id);
+            $user = User::find($id);
+            $is_deleted = $user->is_deleted;
+            $undo = !$is_deleted;
+            $activity = $undo ? 'deleted': 'restored';
+
+            $names = Helper::getUserNames($id); 
+            $user->is_deleted = $undo;
+            $user->deleted_by = $author;
+            if($user->save()){
+                $role = Helper::getUserRoleName($author_id);
+                $action = "".$activity." ".$names."'s account";
+                Helper::logActivity($request, ['name' => $author, 'role' => $role, 'action' => $action]);
+                $this->response['message'] = Helper::getMessage('success', $action);
+                $this->response['statusCode'] = Globals::$STATUS_CODE_SUCCESS;
+            }else{
+                $this->response['message'] ="Unable to delete user!";
+                $this->response['statusCode'] = Globals::$STATUS_CODE_FAILED;
+            }
+        }
+    }catch(\Exception $ex){
+        $this->response['statusCode'] = Globals::$STATUS_CODE_ERROR;
+        $this->response['message'] = $ex->getMessage();
+    }
+    
+    return response()->json($this->response, 200); 
 }
 
 public function changeAccountStatus(Request $request, $id)
@@ -548,6 +508,62 @@ public function changeAccountStatus(Request $request, $id)
     return response()->json($this->response, 200);  
     
 }
+
+
+
+public function changePassword(Request $request)
+    {
+        $resp = new ApiResponse();
+        try {
+            
+            if( ($request->has('user_id') && $request->filled('user_id')) &&
+            ($request->has('current_password') && $request->filled('current_password')) &&
+            ($request->has('new_password') && $request->filled('new_password')) &&
+            ($request->has('confirm_password') && $request->filled('confirm_password'))){
+                
+                $user_id = $request->input('user_id');
+                $current_password = $request->input('current_password');
+                $new_password = $request->input('new_password');
+                $confirm_password = $request->input('confirm_password');
+                
+                $user = User::find($user_id);
+                $old_password = $user->password;
+                if($new_password == $confirm_password){
+                    if(Hash::check($current_password, $old_password)){
+                        $user->password = Hash::make($new_password);
+                        if($user->save()){
+                            $action = "changed your password";
+                            $name = $user->first_name." ".$user->last_name;
+                            Helper::logActivity($request, ['name' => $name, 'role' => Helper::getUserRole($user->role), 'action' => $action]);
+                            $message = Helper::getMessage('success', $action);
+                            $resp->statusCode = Globals::$STATUS_CODE_SUCCESS;
+                            $resp->message  = $message;
+                        }else{
+                            $resp->statusCode = Globals::$STATUS_CODE_FAILED;
+                            $resp->message = "Unable to change your password";
+                        }  
+                    }else{
+                        $resp->statusCode = Globals::$STATUS_CODE_FAILED;
+                        $resp->message = "Incorrect old password";
+                    }
+                }else{
+                    $resp->statusCode = Globals::$STATUS_CODE_FAILED;
+                    $resp->message = "Enter new matching passwords";
+                }
+            }
+            else{
+                $resp->statusCode = Globals::$STATUS_CODE_ERROR;
+                $resp->message = "Unable to process request";
+            }
+            
+        } catch (\Exception $ex) {
+            $resp->statusCode = Globals::$STATUS_CODE_ERROR;
+            $resp->message = $ex->getMessage();
+            $resp->data = $ex->getMessage();
+        }
+        
+        return response()->json($resp);
+    }
 
 
 }

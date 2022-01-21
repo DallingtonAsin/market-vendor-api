@@ -6,7 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ShoppingOrderController;
 use App\Http\Controllers\RoleController;
-
+use App\Http\Controllers\CompanySettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +29,13 @@ Route::post('/vendor/login', [UserController::class, 'authenticate']);
 
 Route::post('/report', [ReportController::class, 'getSystemStats']); 
 
+// USER ACCOUNT 
+Route::group(['prefix' => 'user', 'middleware' => ['auth:api-users']], function(){
+
+    Route::post('/password/edit', [UserController::class, 'changePassword']);
+    
+});
+
 Route::group(['middleware' => 'auth:api-users'], function(){
  
     Route::post('/user/change-account/{id}', [UserController::class, 'changeAccountStatus']);
@@ -39,6 +46,7 @@ Route::group(['middleware' => 'auth:api-users'], function(){
         'users' => UserController::class,
         'roles' => RoleController::class,
         'shopping-orders' => ShoppingOrderController::class,
+        'company' => CompanySettingsController::class,
     ]);
 });
 
