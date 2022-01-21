@@ -16,14 +16,14 @@ class CreateShoppingOrdersTable extends Migration
         Schema::create('shopping_orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_no')->unique();
-            $table->string('name');
-            $table->string('phone_number')->unique();
+            $table->unsignedBigInteger('customer_id');
             $table->json('items');
             $table->double('amount');
             $table->string('address');
             $table->string('status')->default('PENDING');
             $table->date('delivered_on')->nullable();
             $table->boolean('is_deleted')->default(0);
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->timestamps();
         });
     }
