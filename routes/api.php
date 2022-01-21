@@ -30,11 +30,15 @@ Route::post('/vendor/login', [UserController::class, 'authenticate']);
 Route::post('/report', [ReportController::class, 'getSystemStats']); 
 
 Route::group(['middleware' => 'auth:api-users'], function(){
+ 
     Route::post('/user/change-account/{id}', [UserController::class, 'changeAccountStatus']);
+    Route::post('/shopping-orders/change-status/{id}', [ShoppingOrderController::class, 'changeOrderStatus']);
+
+
     Route::resources([
         'users' => UserController::class,
         'roles' => RoleController::class,
-        'shopping-lists' => ShoppingOrderController::class,
+        'shopping-orders' => ShoppingOrderController::class,
     ]);
 });
 

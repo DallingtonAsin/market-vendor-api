@@ -17,6 +17,7 @@ class ShoppingOrderFactory extends Factory
     public function definition()
     {
         return [
+            'order_no' => $this->faker->unique()->domainWord,
             'name' => $this->faker->name,
             'phone_number' => $this->faker->e164phoneNumber,
             'items' => json_encode($this->faker->randomElement(['sugar', 'tea', 'milk', 'beans'])),

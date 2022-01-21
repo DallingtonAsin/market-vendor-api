@@ -15,6 +15,7 @@ class CreateShoppingOrdersTable extends Migration
     {
         Schema::create('shopping_orders', function (Blueprint $table) {
             $table->id();
+            $table->string('order_no')->unique();
             $table->string('name');
             $table->string('phone_number')->unique();
             $table->json('items');

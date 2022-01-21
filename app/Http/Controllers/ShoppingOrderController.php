@@ -6,6 +6,9 @@ use App\Models\ShoppingOrder;
 use Illuminate\Http\Request;
 use App\Repositories\ShoppingOrderRepository;
 use App\Helpers\formattedApiResponse;
+use Validator;
+use Globals;
+use Helper;
 
 class ShoppingOrderController extends Controller
 {
@@ -85,4 +88,54 @@ class ShoppingOrderController extends Controller
     {
         //
     }
+
+
+    public function changeOrderStatus(Request $request, $id)
+{
+    
+    $validator = Validator::make($request->all(), [
+        'user_id' => 'required',
+        'status' => 'required',
+    ]);
+    
+    try{
+        if($validator->fails()){
+            $this->response['statusCode'] = Globals::$STATUS_CODE_ERROR;
+            $this->response['message'] = $validator->errors()->all();
+        }else{
+            
+            $author_id = $request->input('user_id');
+            $status = $request->input('status');
+
+            $statusAction = $status == 1 ? 'processed' : 'pending';
+            if(ShoppingOrder::where('id', $id)->exists()){
+            $order = ShoppingOrder::find($id);
+            $order_no = $order->order_no; 
+            $order->status = $status == 1 ? Globals::$SHOPPING_LIST_PROCESSED_STATUS :  Globals::$SHOPPING_LIST_PENDING_STATUS;
+            if($order->save()){
+                $author = Helper::getUserNames($author_id);
+                $role = Helper::getUserRoleName($author_id);
+                $action = "changed the status of order with number ".$order_no." to ".$statusAction."";
+                Helper::logActivity($request, ['name' => $author, 'role' => $role, 'action' => $action]);
+                $this->response['message'] = Helper::getMessage('success', $action);
+                $this->response['statusCode'] = Globals::$STATUS_CODE_SUCCESS;
+            }else{
+                $this->response['message'] ="Unable to ".$statusAction." order";
+                $this->response['statusCode'] = Globals::$STATUS_CODE_FAILED;
+            }
+        }else{
+            $this->response['message'] ="Order doesn't exist!";
+            $this->response['statusCode'] = Globals::$STATUS_CODE_FAILED;
+        }
+        }
+    }catch(\Exception $ex){
+        $this->response['statusCode'] = Globals::$STATUS_CODE_ERROR;
+        $this->response['message'] = $ex->getMessage();
+    }
+    
+    return response()->json($this->response, 200);  
+    
+}
+
+
 }
