@@ -4,10 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\ShoppingListController;
-
-
-
+use App\Http\Controllers\ShoppingOrderController;
+use App\Http\Controllers\RoleController;
 
 
 /*
@@ -31,16 +29,17 @@ Route::post('/vendor/login', [UserController::class, 'authenticate']);
 
 Route::post('/report', [ReportController::class, 'getSystemStats']); 
 
-Route::group(['middleware' => 'auth:api-vendors'], function(){
+Route::group(['middleware' => 'auth:api-users'], function(){
     Route::post('/user/change-account/{id}', [UserController::class, 'changeAccountStatus']);
     Route::resources([
         'users' => UserController::class,
-        'shopping-lists' => ShoppingListController::class,
+        'roles' => RoleController::class,
+        'shopping-lists' => ShoppingOrderController::class,
     ]);
 });
 
 // REPORTS
-Route::group(['prefix' => 'reports', 'middleware' => ['auth:api-vendors']], function(){
+Route::group(['prefix' => 'reports', 'middleware' => ['auth:api-users']], function(){
     Route::get('/', [ReportController::class, 'index']);
     Route::get('/system-audit', [ReportController::class, 'fetchLogs']);
 });

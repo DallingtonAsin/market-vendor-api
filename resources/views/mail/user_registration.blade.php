@@ -11,7 +11,7 @@
 
 @if($activity == 'registration')
 <p>You will be able to login into the system using the following details<br/>
-<strong>Email</strong>: <span>{{ $email }}</span><br/>
+<strong>Email</strong>: <span>{{ $email }}</span> OR <strong>Username</strong>: <span>{{ $username }}</span><br/> 
 <strong>Password</strong>: <span>{{ $password }}</span><br/>
 </p>
 @endif

@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ShoppingList;
+use App\Models\Company;
 use Illuminate\Http\Request;
-use App\Repositories\ShoppingListRepository;
-use App\Helpers\formattedApiResponse;
 
-class ShoppingListController extends Controller
+class CompanyController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(ShoppingListRepository $shoppingListRepo)
+    public function index()
     {
-        $shoppingLists = $shoppingListRepo->getShoppingLists();
-        return formattedApiResponse::getJson($shoppingLists);
+        //
     }
 
     /**
@@ -44,10 +41,10 @@ class ShoppingListController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ShoppingList  $shoppingList
+     * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function show(ShoppingList $shoppingList)
+    public function show(Company $company)
     {
         //
     }
@@ -55,10 +52,10 @@ class ShoppingListController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ShoppingList  $shoppingList
+     * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function edit(ShoppingList $shoppingList)
+    public function edit(Company $company)
     {
         //
     }
@@ -67,10 +64,10 @@ class ShoppingListController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ShoppingList  $shoppingList
+     * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ShoppingList $shoppingList)
+    public function update(Request $request, Company $company)
     {
         //
     }
@@ -78,10 +75,10 @@ class ShoppingListController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ShoppingList  $shoppingList
+     * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ShoppingList $shoppingList)
+    public function destroy(Company $company)
     {
         //
     }

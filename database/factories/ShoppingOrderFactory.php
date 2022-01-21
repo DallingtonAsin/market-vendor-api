@@ -3,12 +3,12 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\ShoppingList;
+use App\Models\ShoppingOrder;
 
-class ShoppingListFactory extends Factory
+class ShoppingOrderFactory extends Factory
 {
 
-    protected $model = ShoppingList::class;
+    protected $model = ShoppingOrder::class;
     /**
      * Define the model's default state.
      *

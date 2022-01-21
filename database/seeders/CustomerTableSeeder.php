@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class ShoppingListTableSeeder extends Seeder
+class CustomerTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,6 +13,6 @@ class ShoppingListTableSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\ShoppingOrder::factory()->count(5)->create();
+           \App\Models\Customer::factory()->count(5)->create();
     }
 }

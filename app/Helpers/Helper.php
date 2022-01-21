@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\ActivityLog;
 use App\Models\ErrorLog;
 use App\Models\User;
+use App\Models\Role;
 use Carbon\Carbon;
 use Globals;
 use Illuminate\Support\Facades\Hash;
@@ -104,6 +105,12 @@ class Helper
     public static function getUserRoleName($user_id){
         return 'Vendor';
     }
+
+    public static function getUserRole($id){
+        $role = Role::find($id);
+        return $role->name;
+    }
+
     
 
   
