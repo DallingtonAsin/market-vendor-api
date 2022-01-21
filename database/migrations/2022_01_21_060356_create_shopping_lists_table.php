@@ -15,6 +15,11 @@ class CreateShoppingListsTable extends Migration
     {
         Schema::create('shopping_lists', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('phone_number')->unique();
+            $table->json('items');
+            $table->string('delivery_location');
+            $table->date('delivery_date')->nullable();
             $table->timestamps();
         });
     }
