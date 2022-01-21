@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Validator;
+use Globals;
+use Auth;
+use Helper;
 
 class UserController extends Controller
 {
@@ -79,6 +82,29 @@ class UserController extends Controller
     
     return response()->json($this->response, 200);
 }
+
+private function getUserId($login)
+{
+    filter_var($login, FILTER_VALIDATE_EMAIL)
+    ? $fieldType = 'email' 
+    : $fieldType = 'username';
+    
+    $userId = User::where($fieldType, $login)
+    ->value('email');
+    
+    return $userId;
+}
+
+private function findAccountStatus($id){ 
+    $accountStatus = User::where('email', $id)->value('is_active');
+    return $accountStatus; 
+}
+
+private function isAccountDeleted($id){ 
+    $is_deleted = User::where('email', $id)->value('is_deleted');
+    return $is_deleted; 
+}
+
     /**
      * Display a listing of the resource.
      *

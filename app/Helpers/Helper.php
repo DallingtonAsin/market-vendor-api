@@ -10,7 +10,7 @@ use Globals;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
-class SharedCommon
+class Helper
 {
 
     public static function logError($data)

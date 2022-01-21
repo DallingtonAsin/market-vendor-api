@@ -20,7 +20,7 @@ class CreateActivityLogsTable extends Migration
             $table->text('description');
             $table->ipAddress('ip_address');
             $table->timestamp('date')->default(DB::raw('CURRENT_TIMESTAMP'));
-          
+            $table->timestamps();
         });
     }
 

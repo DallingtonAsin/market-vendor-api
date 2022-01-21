@@ -20,6 +20,7 @@ class CreateErrorLogsTable extends Migration
             $table->string('controller');
             $table->string('method');
             $table->dateTime('date')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamps();
         });
     }
 

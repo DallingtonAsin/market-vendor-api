@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class ActivityLog extends Model
 {
     use HasFactory;
+
+    protected $table='activity_logs';
+    public $timestamps = true;
+    
 }
