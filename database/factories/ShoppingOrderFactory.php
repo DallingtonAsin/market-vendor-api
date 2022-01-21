@@ -21,7 +21,9 @@ class ShoppingOrderFactory extends Factory
             'name' => $this->faker->name,
             'phone_number' => $this->faker->e164phoneNumber,
             'items' => json_encode($this->faker->randomElement(['sugar', 'tea', 'milk', 'beans'])),
+            'amount' => $this->faker->numberBetween($min = 10000, $max = 95000),
             'address' => $this->faker->streetName,
+
         ];
     }
 }

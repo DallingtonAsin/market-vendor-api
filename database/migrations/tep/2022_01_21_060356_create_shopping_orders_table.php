@@ -19,6 +19,7 @@ class CreateShoppingOrdersTable extends Migration
             $table->string('name');
             $table->string('phone_number')->unique();
             $table->json('items');
+            $table->double('amount');
             $table->string('address');
             $table->string('status')->default('PENDING');
             $table->date('delivered_on')->nullable();
