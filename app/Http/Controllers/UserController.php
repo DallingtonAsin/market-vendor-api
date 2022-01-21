@@ -73,7 +73,7 @@ class UserController extends Controller
                         $this->response['statusCode'] = Globals::$STATUS_CODE_SUCCESS;
                         $action = $this->response['message'] =  "logged into the system";
                         $user = Auth::user();
-                        $user['access_token'] = $user->createToken('User->'.$user->username, ['user'])->accessToken;
+                        $user['access_token'] = $user->createToken('vendor->'.$user->username, ['vendor'])->accessToken;
                         $this->response['data'] = $user;
                         Helper::logActivity($request, ['name' => $login, 'role' => 'admin', 'action' => $action]);
                     }
