@@ -9,6 +9,7 @@ use App\Helpers\ApiResponse;
 use App\Repositories\UserRepository;
 use App\Helpers\formattedApiResponse;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use App\Mail\RegistrationMailSender;
 use Hash;
 use Validator;
@@ -256,14 +257,14 @@ public function store(Request $request)
                             $now = now();
                             $registeredRole = Helper::getUserRole($role);
                             $action =  "registered user ".$name." as ".$registeredRole."";
-
+                            
                             $company = Company::whereNotNull('name')->first();
                             if(isset($company->name)){
                                 $company_name = $company->name;
                             }else{
                                 $company_name = env('APP_NAME');
                             }
-
+                            
                             $sendAction = "You have been registered as ".$registeredRole."  at ".$company_name." today at ".$now."";
                             Helper::logActivity($request, ['name' => $registra, 'role' => Helper::getUserRole($registra_id), 'action' => $action]);
                             $data = array(
@@ -439,7 +440,7 @@ public function destroy($id)
             $is_deleted = $user->is_deleted;
             $undo = !$is_deleted;
             $activity = $undo ? 'deleted': 'restored';
-
+            
             $names = Helper::getUserNames($id); 
             $user->is_deleted = $undo;
             $user->deleted_by = $author;
@@ -478,27 +479,27 @@ public function changeAccountStatus(Request $request, $id)
             
             $author_id = $request->input('user_id');
             $status = $request->input('status');
-
+            
             $statusAction = $status == 1 ? 'activated' : 'deactivated';
             if(User::where('id', $id)->exists()){
-            $user = User::find($id);
-            $names = Helper::getUserNames($id); 
-            $user->is_active = $status;
-            if($user->save()){
-                $author = Helper::getUserNames($author_id);
-                $role = Helper::getUserRoleName($author_id);
-                $action = "".$statusAction." ".$names."'s account";
-                Helper::logActivity($request, ['name' => $author, 'role' => $role, 'action' => $action]);
-                $this->response['message'] = Helper::getMessage('success', $action);
-                $this->response['statusCode'] = Globals::$STATUS_CODE_SUCCESS;
+                $user = User::find($id);
+                $names = Helper::getUserNames($id); 
+                $user->is_active = $status;
+                if($user->save()){
+                    $author = Helper::getUserNames($author_id);
+                    $role = Helper::getUserRoleName($author_id);
+                    $action = "".$statusAction." ".$names."'s account";
+                    Helper::logActivity($request, ['name' => $author, 'role' => $role, 'action' => $action]);
+                    $this->response['message'] = Helper::getMessage('success', $action);
+                    $this->response['statusCode'] = Globals::$STATUS_CODE_SUCCESS;
+                }else{
+                    $this->response['message'] ="Unable to ".$statusAction." vendor account!";
+                    $this->response['statusCode'] = Globals::$STATUS_CODE_FAILED;
+                }
             }else{
-                $this->response['message'] ="Unable to ".$statusAction." vendor account!";
+                $this->response['message'] ="Vendor account doesn't exist!";
                 $this->response['statusCode'] = Globals::$STATUS_CODE_FAILED;
             }
-        }else{
-            $this->response['message'] ="Vendor account doesn't exist!";
-            $this->response['statusCode'] = Globals::$STATUS_CODE_FAILED;
-        }
         }
     }catch(\Exception $ex){
         $this->response['statusCode'] = Globals::$STATUS_CODE_ERROR;
@@ -512,58 +513,102 @@ public function changeAccountStatus(Request $request, $id)
 
 
 public function changePassword(Request $request)
-    {
-        $resp = new ApiResponse();
-        try {
+{
+    $resp = new ApiResponse();
+    try {
+        
+        if( ($request->has('user_id') && $request->filled('user_id')) &&
+        ($request->has('current_password') && $request->filled('current_password')) &&
+        ($request->has('new_password') && $request->filled('new_password')) &&
+        ($request->has('confirm_password') && $request->filled('confirm_password'))){
             
-            if( ($request->has('user_id') && $request->filled('user_id')) &&
-            ($request->has('current_password') && $request->filled('current_password')) &&
-            ($request->has('new_password') && $request->filled('new_password')) &&
-            ($request->has('confirm_password') && $request->filled('confirm_password'))){
-                
-                $user_id = $request->input('user_id');
-                $current_password = $request->input('current_password');
-                $new_password = $request->input('new_password');
-                $confirm_password = $request->input('confirm_password');
-                
-                $user = User::find($user_id);
-                $old_password = $user->password;
-                if($new_password == $confirm_password){
-                    if(Hash::check($current_password, $old_password)){
-                        $user->password = Hash::make($new_password);
-                        if($user->save()){
-                            $action = "changed your password";
-                            $name = $user->first_name." ".$user->last_name;
-                            Helper::logActivity($request, ['name' => $name, 'role' => Helper::getUserRole($user->role), 'action' => $action]);
-                            $message = Helper::getMessage('success', $action);
-                            $resp->statusCode = Globals::$STATUS_CODE_SUCCESS;
-                            $resp->message  = $message;
-                        }else{
-                            $resp->statusCode = Globals::$STATUS_CODE_FAILED;
-                            $resp->message = "Unable to change your password";
-                        }  
+            $user_id = $request->input('user_id');
+            $current_password = $request->input('current_password');
+            $new_password = $request->input('new_password');
+            $confirm_password = $request->input('confirm_password');
+            
+            $user = User::find($user_id);
+            $old_password = $user->password;
+            if($new_password == $confirm_password){
+                if(Hash::check($current_password, $old_password)){
+                    $user->password = Hash::make($new_password);
+                    if($user->save()){
+                        $action = "changed your password";
+                        $name = $user->first_name." ".$user->last_name;
+                        Helper::logActivity($request, ['name' => $name, 'role' => Helper::getUserRole($user->role), 'action' => $action]);
+                        $message = Helper::getMessage('success', $action);
+                        $resp->statusCode = Globals::$STATUS_CODE_SUCCESS;
+                        $resp->message  = $message;
                     }else{
                         $resp->statusCode = Globals::$STATUS_CODE_FAILED;
-                        $resp->message = "Incorrect old password";
-                    }
+                        $resp->message = "Unable to change your password";
+                    }  
                 }else{
                     $resp->statusCode = Globals::$STATUS_CODE_FAILED;
-                    $resp->message = "Enter new matching passwords";
+                    $resp->message = "Incorrect old password";
                 }
+            }else{
+                $resp->statusCode = Globals::$STATUS_CODE_FAILED;
+                $resp->message = "Enter new matching passwords";
             }
-            else{
-                $resp->statusCode = Globals::$STATUS_CODE_ERROR;
-                $resp->message = "Unable to process request";
-            }
-            
-        } catch (\Exception $ex) {
+        }
+        else{
             $resp->statusCode = Globals::$STATUS_CODE_ERROR;
-            $resp->message = $ex->getMessage();
-            $resp->data = $ex->getMessage();
+            $resp->message = "Unable to process request";
         }
         
-        return response()->json($resp);
+    } catch (\Exception $ex) {
+        $resp->statusCode = Globals::$STATUS_CODE_ERROR;
+        $resp->message = $ex->getMessage();
+        $resp->data = $ex->getMessage();
     }
+    
+    return response()->json($resp);
+}
+
+
+protected function getUsernamesArr(){
+    $usernames = User::pluck('username');
+    $dataArr = array();
+    foreach($usernames as $username)
+    {
+        $dataArr[] = $username;
+    }
+    return $dataArr;
+}
+
+public function validateUsername($old_username, $new_username){
+    
+    $arr =  $this->getUsernamesArr();
+    if(in_array($old_username, $arr))
+    {
+        for($i=0; $i<count($arr); $i++){
+            if($arr[$i] == $old_username){
+                $index = $i;
+                break;
+            }
+            else{
+                $index = -1;
+            }
+        }
+        $newArr = Arr::except($arr, $index);
+    }
+    else {
+        $newArr = $arr;
+    }
+    $bool = $this->is_inArr($newArr, $new_username);
+    return $bool;
+}
+
+public function is_inArr($dataArr, $item){
+    if(count($dataArr) > 0){
+        (in_array($item, $dataArr))
+        ? $bool = true
+        : $bool = false;
+    }
+    return $bool;
+}
+
 
 
 }

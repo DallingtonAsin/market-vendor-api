@@ -8,7 +8,8 @@ use App\Http\Controllers\ShoppingOrderController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CompanySettingsController;
-
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\GoodsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,11 +31,15 @@ Route::post('/vendor/login', [UserController::class, 'authenticate']);
 
 Route::post('/report', [ReportController::class, 'getSystemStats']); 
 
-// USER ACCOUNT 
-Route::group(['prefix' => 'user', 'middleware' => ['auth:api-users']], function(){
 
+Route::group(['prefix' => 'user', 'middleware' => ['auth:api-users']], function(){
     Route::post('/password/edit', [UserController::class, 'changePassword']);
-    
+});
+
+Route::group(['prefix' => 'vendor', 'middleware' => ['auth:api-users']], function(){
+    Route::get('/myorders/{id}', [ShoppingOrderController::class, 'myOrders']);
+    Route::get('/myorders/pending/{id}', [ShoppingOrderController::class, 'myPendingOrders']);
+    Route::get('/myorders/processed/{id}', [ShoppingOrderController::class, 'myProcessedOrders']);
 });
 
 // Customer Login and Registration (done)
@@ -42,10 +47,29 @@ Route::post('/customer/login', [CustomerController::class, 'customerLogin']); //
 Route::post('/customer/register', [CustomerController::class, 'register']); // done
 
 
+// Customer Routes
+Route::group(['prefix' => 'customer', 'middleware' => ['auth:api-customers']], function(){
+
+    Route::get('/details', [CustomerController::class, 'findCustomer']); //done  
+    Route::post('/password/change', [CustomerController::class, 'changePassword']); // done
+    Route::put('/profile/update', [CustomerController::class, 'updateProfile']); // done
+    Route::post('/change/profile-picture', [CustomerController::class, 'uploadProfilePicture']); // done
+    
+    Route::post('/payment/create', [PaymentController::class, 'create']); // done
+    Route::get('/notifications', [PaymentController::class, 'getNotifications']); // done
+    Route::post('/account/topup', [PaymentController::class, 'topupUserAccount']); //done
+    Route::get('/transactions', [PaymentController::class, 'getTransactionHistory']); // done
+    Route::post('/suggestion', [MailController::class, 'postCustomerSuggestion']); // done
+
+});
+
 Route::group(['middleware' => 'auth:api-users'], function(){
  
     Route::post('/user/change-account/{id}', [UserController::class, 'changeAccountStatus']);
     Route::post('/shopping-orders/change-status/{id}', [ShoppingOrderController::class, 'changeOrderStatus']);
+   
+    Route::get('/shopping-orders/pending', [ShoppingOrderController::class, 'pendingOrders']);
+    Route::get('/shopping-orders/processed', [ShoppingOrderController::class, 'processedOrders']);
 
 
     Route::resources([
@@ -54,6 +78,7 @@ Route::group(['middleware' => 'auth:api-users'], function(){
         'shopping-orders' => ShoppingOrderController::class,
         'company' => CompanySettingsController::class,
         'customers' => CustomerController::class,
+        'goods' => GoodsController::class,
     ]);
 });
 

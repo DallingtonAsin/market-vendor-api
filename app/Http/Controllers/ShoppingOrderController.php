@@ -23,6 +23,40 @@ class ShoppingOrderController extends Controller
         return formattedApiResponse::getJson($ShoppingOrders);
     }
 
+
+    public function pendingOrders(ShoppingOrderRepository $ShoppingOrderRepo)
+    {
+        $ShoppingOrders = $ShoppingOrderRepo->getPendingShoppingOrders();
+        return formattedApiResponse::getJson($ShoppingOrders);
+    }
+
+    public function processedOrders(ShoppingOrderRepository $ShoppingOrderRepo)
+    {
+        $ShoppingOrders = $ShoppingOrderRepo->getProcessedShoppingOrders();
+        return formattedApiResponse::getJson($ShoppingOrders);
+    }
+
+
+
+    public function myOrders(ShoppingOrderRepository $ShoppingOrderRepo, $id)
+    {
+        $ShoppingOrders = $ShoppingOrderRepo->getMyShoppingOrders($id);
+        return formattedApiResponse::getJson($ShoppingOrders);
+    }
+
+
+    public function myPendingOrders(ShoppingOrderRepository $ShoppingOrderRepo, $id)
+    {
+        $ShoppingOrders = $ShoppingOrderRepo->getMyPendingShoppingOrders($id);
+        return formattedApiResponse::getJson($ShoppingOrders);
+    }
+
+    public function myProcessedOrders(ShoppingOrderRepository $ShoppingOrderRepo, $id)
+    {
+        $ShoppingOrders = $ShoppingOrderRepo->getMyProcessedShoppingOrders($id);
+        return formattedApiResponse::getJson($ShoppingOrders);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

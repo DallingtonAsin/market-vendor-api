@@ -18,6 +18,7 @@ class ShoppingOrderFactory extends Factory
     {
         return [
             'order_no' => $this->faker->unique()->domainWord,
+            'vendor_id' => $this->faker->randomElement([1, 3, 5]),
             'customer_id' => $this->faker->randomElement([1, 2, 3, 4]),
             'items' => json_encode($this->faker->randomElement(['sugar', 'tea', 'milk', 'beans'])),
             'amount' => $this->faker->numberBetween($min = 10000, $max = 95000),
