@@ -4,15 +4,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Helpers\ApiResponse;
+use App\Repositories\UserRepository;
+use App\Helpers\formattedApiResponse;
 use Validator;
 use Globals;
 use Auth;
 use Helper;
 
+
 class UserController extends Controller
 {
 
-
+    public $response = [];
+    
+    
+    public function __constructor(){
+        $this->response = new ApiResponse();
+    }
+    
 
 
     public function authenticate(Request $request)
@@ -110,9 +120,10 @@ private function isAccountDeleted($id){
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(UserRepository $userrepo)
     {
-        //
+        $users = $userrepo->getUsers();
+        return formattedApiResponse::getJson($users);
     }
 
     /**

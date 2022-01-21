@@ -3,6 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReportController;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,3 +24,19 @@ use App\Http\Controllers\UserController;
 
 // MARKET VENDOR DASHBOARD AUTH
 Route::post('/vendor/login', [UserController::class, 'authenticate']); 
+
+
+Route::post('/report', [ReportController::class, 'getSystemStats']); 
+
+Route::group(['middleware' => 'auth:api-vendors'], function(){
+
+    Route::resources([
+        'users' => UserController::class,
+    ]);
+});
+
+// REPORTS
+Route::group(['prefix' => 'reports', 'middleware' => ['auth:api-vendors']], function(){
+    Route::get('/', [ReportController::class, 'index']);
+    Route::get('/system-audit', [ReportController::class, 'fetchLogs']);
+});
