@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Validator;
 
-class MarketVendorController extends Controller
+class UserController extends Controller
 {
 
 
