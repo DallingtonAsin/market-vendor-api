@@ -19,4 +19,8 @@ class Globals {
     public static $REJECTED_STATUS = "REJECTED";
 
 
+    public static $SHOPPING_LIST_PENDING_STATUS = "PENDING";
+    public static $SHOPPING_LIST_PROCESSED_STATUS = "PROCESSED";
+
+
 }

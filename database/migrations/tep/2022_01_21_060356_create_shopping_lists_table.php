@@ -19,7 +19,8 @@ class CreateShoppingListsTable extends Migration
             $table->string('phone_number')->unique();
             $table->json('items');
             $table->string('delivery_location');
-            $table->date('delivery_date')->nullable();
+            $table->string('status')->default('PENDING');
+            $table->date('delivered_on')->nullable();
             $table->timestamps();
         });
     }
