@@ -7,6 +7,7 @@ use App\Models\ActivityLog;
 use App\Models\ErrorLog;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Customer;
 use Carbon\Carbon;
 use Globals;
 use Illuminate\Support\Facades\Hash;
@@ -112,7 +113,20 @@ class Helper
     }
 
     
-
+    public static function getCustomerData($customer_id){
+        try{
+              $customer = Customer::find($customer_id);
+              if($customer->account_balance >= 1000){
+                    $customer->account_balance = number_format($customer->account_balance);
+               }
+              if(!empty($customer->image)){
+                  $customer->image =  Storage::disk('public')->url($customer->image);
+              }
+          return $customer;
+        }catch(\Exception $ex){
+            throw $ex;
+        }
+    }
   
     
     
