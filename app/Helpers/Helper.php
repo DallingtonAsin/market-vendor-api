@@ -5,6 +5,7 @@ namespace App\Helpers;
 use Illuminate\Http\Request;
 use App\Models\ActivityLog;
 use App\Models\ErrorLog;
+use App\Models\User;
 use Carbon\Carbon;
 use Globals;
 use Illuminate\Support\Facades\Hash;
@@ -78,7 +79,7 @@ class Helper
             $result = floatval(preg_replace('/[^\d.]/','', $input));
             return $result;
         }catch(\Exception $ex){
-            dd($ex->getMessage());
+            throw $ex;
         }
     }
     
@@ -89,6 +90,21 @@ class Helper
         : $message = "You have successfully ".$activity."";
         return $message;
     }
+
+    public static function getUserNames($user_id){
+        $doesUserExist = User::where('id', $user_id)->exists();
+        $userNames = null;
+        if($doesUserExist){
+            $user = User::find($user_id);
+            $userNames = $user->first_name." ".$user->last_name;
+        }
+        return $userNames;
+    }
+
+    public static function getUserRoleName($user_id){
+        return 'Vendor';
+    }
+    
 
   
     

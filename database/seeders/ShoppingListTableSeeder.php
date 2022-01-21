@@ -13,6 +13,6 @@ class ShoppingListTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Models\ShoppingList::class, 5)->create();
+        \App\Models\ShoppingList::factory()->count(5)->create();
     }
 }

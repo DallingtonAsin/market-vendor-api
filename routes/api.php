@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ShoppingListController;
+
+
 
 
 
@@ -29,9 +32,10 @@ Route::post('/vendor/login', [UserController::class, 'authenticate']);
 Route::post('/report', [ReportController::class, 'getSystemStats']); 
 
 Route::group(['middleware' => 'auth:api-vendors'], function(){
-
+    Route::post('/user/change-account/{id}', [UserController::class, 'changeAccountStatus']);
     Route::resources([
         'users' => UserController::class,
+        'shopping-lists' => ShoppingListController::class,
     ]);
 });
 

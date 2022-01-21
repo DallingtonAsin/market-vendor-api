@@ -40,7 +40,7 @@ class ReportController extends Controller
 
     public function fetchLogs(){
         try{
-            $data = ActivityLog::all();
+            $data = ActivityLog::orderBy('id', 'desc')->get();
             $this->response['statusCode'] = Globals::$STATUS_CODE_SUCCESS;
             $this->response['message'] = 'Data Found';
             $this->response['data'] = $data;

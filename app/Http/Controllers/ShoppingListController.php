@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ShoppingList;
 use Illuminate\Http\Request;
+use App\Repositories\ShoppingListRepository;
+use App\Helpers\formattedApiResponse;
 
 class ShoppingListController extends Controller
 {
@@ -12,9 +14,10 @@ class ShoppingListController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ShoppingListRepository $shoppingListRepo)
     {
-        //
+        $shoppingLists = $shoppingListRepo->getShoppingLists();
+        return formattedApiResponse::getJson($shoppingLists);
     }
 
     /**
