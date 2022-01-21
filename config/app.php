@@ -14,6 +14,8 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'domain' => env('DASHBOARD_DOMAIN'),
+    'company' => env('COMPANY'),
 
     /*
     |--------------------------------------------------------------------------

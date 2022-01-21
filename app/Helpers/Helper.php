@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Globals;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\RequestResponse;
 
 class Helper
 {
