@@ -22,7 +22,8 @@ class ReportController extends Controller
     public function index(){
         try{
             $data = array(
-                "total_users" => User::count(),
+                "total_vendors" => User::count(),
+                "total_logs" => ActivityLog::count(),
                 "total_shopping_lists" => ShoppingList::count(),
                 "total_pending_shopping_lists" => ShoppingList::where('status', Globals::$SHOPPING_LIST_PENDING_STATUS)->count(),
                 "total_processed_shopping_lists" => ShoppingList::where('status', Globals::$SHOPPING_LIST_PROCESSED_STATUS)->count(),
