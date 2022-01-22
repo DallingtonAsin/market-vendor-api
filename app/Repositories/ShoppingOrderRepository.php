@@ -26,6 +26,7 @@ class ShoppingOrderRepository{
           $order->customer_name = $customer->first_name." ".$customer->last_name;
           $order->phone_number = $customer->phone_number;
           $order->vendor = $vendor->first_name." ".$vendor->last_name;
+          $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
        }
     }
     return $this->shopping_lists;
@@ -42,6 +43,7 @@ class ShoppingOrderRepository{
             $order->customer_name = $customer->first_name." ".$customer->last_name;
             $order->phone_number = $customer->phone_number;
             $order->vendor = $vendor->first_name." ".$vendor->last_name;
+            $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
          }
       }
       return $this->shopping_lists;
@@ -59,6 +61,7 @@ class ShoppingOrderRepository{
             $order->customer_name = $customer->first_name." ".$customer->last_name;
             $order->phone_number = $customer->phone_number;
             $order->vendor = $vendor->first_name." ".$vendor->last_name;
+            $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
          }
       }
       return $this->shopping_lists;
@@ -77,6 +80,7 @@ class ShoppingOrderRepository{
              $order->customer_name = $customer->first_name." ".$customer->last_name;
              $order->phone_number = $customer->phone_number;
              $order->vendor = $vendor->first_name." ".$vendor->last_name;
+             $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
           }
        }
        return $this->shopping_lists;
@@ -93,6 +97,7 @@ class ShoppingOrderRepository{
                $order->customer_name = $customer->first_name." ".$customer->last_name;
                $order->phone_number = $customer->phone_number;
                $order->vendor = $vendor->first_name." ".$vendor->last_name;
+               $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
             }
          }
          return $this->shopping_lists;
@@ -110,6 +115,7 @@ class ShoppingOrderRepository{
                $order->customer_name = $customer->first_name." ".$customer->last_name;
                $order->phone_number = $customer->phone_number;
                $order->vendor = $vendor->first_name." ".$vendor->last_name;
+               $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
             }
          }
          return $this->shopping_lists;
@@ -126,6 +132,7 @@ class ShoppingOrderRepository{
           $order->customer_name = $customer->first_name." ".$customer->last_name;
           $order->phone_number = $customer->phone_number;
           $order->vendor = $vendor->first_name." ".$vendor->last_name;
+          $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
        }
     }
     return $this->shopping_lists;
@@ -137,11 +144,14 @@ class ShoppingOrderRepository{
    $this->shopping_lists = ShoppingOrder::where('order_no', $order_no)->orderBy('id', 'desc')->get();
     if(!empty($this->shopping_lists)){
        foreach($this->shopping_lists as $order){
+
           $customer = $this->getCustomerDetails($order->customer_id);
           $vendor = $this->getVendorDetails($order->vendor_id);
           $order->customer_name = $customer->first_name." ".$customer->last_name;
           $order->phone_number = $customer->phone_number;
           $order->vendor = $vendor->first_name." ".$vendor->last_name;
+          $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
+
        }
     }
     return $this->shopping_lists;
