@@ -24,7 +24,7 @@ class CreateShoppingOrdersTable extends Migration
             $table->double('amount');
             $table->string('address');
             $table->string('status')->default('PENDING');
-            $table->date('delivered_on')->nullable();
+            $table->date('delivered_date')->nullable();
             $table->boolean('is_deleted')->default(0);
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->foreign('vendor_id')->references('id')->on('users')->onDelete('cascade');

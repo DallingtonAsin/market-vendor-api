@@ -130,7 +130,7 @@ class ShoppingOrderController extends Controller
                 $order->address = $address;
                 $order->delivered_on = $delivered_date;
                 $order->customer_id = $customer_id;
-                $order->delivered_on = date('Y-m-d', strtotime($delivered_date));
+                $order->delivered_date= date('Y-m-d', strtotime($delivered_date));
 
                 if($order->save()){
                     
