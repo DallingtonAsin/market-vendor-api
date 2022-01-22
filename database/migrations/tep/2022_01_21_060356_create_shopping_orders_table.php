@@ -20,6 +20,7 @@ class CreateShoppingOrdersTable extends Migration
             $table->integer('vendor_id')->unsigned();
             $table->unsignedBigInteger('customer_id');
             $table->json('items');
+            $table->double('quantity')->default(1);
             $table->double('amount');
             $table->string('address');
             $table->string('status')->default('PENDING');
