@@ -30,7 +30,7 @@ class VendorRepository{
    public function getVendorDetails($vendor_id){
        try{
 
-          $user = User::find($vendor_id);
+          $user = User::where('id', $vendor_id)->get();
           return $user;
 
        }catch(\Exception $ex){
