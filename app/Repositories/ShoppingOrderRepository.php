@@ -27,6 +27,7 @@ class ShoppingOrderRepository{
           $order->phone_number = $customer->phone_number;
           $order->vendor = $vendor->first_name." ".$vendor->last_name;
           $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
+          $order->amount = number_format($order->amount);
        }
     }
     return $this->shopping_lists;
@@ -44,6 +45,7 @@ class ShoppingOrderRepository{
             $order->phone_number = $customer->phone_number;
             $order->vendor = $vendor->first_name." ".$vendor->last_name;
             $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
+            $order->amount = number_format($order->amount);
          }
       }
       return $this->shopping_lists;
@@ -62,6 +64,7 @@ class ShoppingOrderRepository{
             $order->phone_number = $customer->phone_number;
             $order->vendor = $vendor->first_name." ".$vendor->last_name;
             $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
+            $order->amount = number_format($order->amount);
          }
       }
       return $this->shopping_lists;
@@ -81,6 +84,7 @@ class ShoppingOrderRepository{
              $order->phone_number = $customer->phone_number;
              $order->vendor = $vendor->first_name." ".$vendor->last_name;
              $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
+             $order->amount = number_format($order->amount);
           }
        }
        return $this->shopping_lists;
@@ -98,6 +102,7 @@ class ShoppingOrderRepository{
                $order->phone_number = $customer->phone_number;
                $order->vendor = $vendor->first_name." ".$vendor->last_name;
                $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
+               $order->amount = number_format($order->amount);
             }
          }
          return $this->shopping_lists;
@@ -116,6 +121,7 @@ class ShoppingOrderRepository{
                $order->phone_number = $customer->phone_number;
                $order->vendor = $vendor->first_name." ".$vendor->last_name;
                $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
+               $order->amount = number_format($order->amount);
             }
          }
          return $this->shopping_lists;
@@ -133,6 +139,7 @@ class ShoppingOrderRepository{
           $order->phone_number = $customer->phone_number;
           $order->vendor = $vendor->first_name." ".$vendor->last_name;
           $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
+          $order->amount = number_format($order->amount);
        }
     }
     return $this->shopping_lists;
@@ -151,6 +158,8 @@ class ShoppingOrderRepository{
           $order->phone_number = $customer->phone_number;
           $order->vendor = $vendor->first_name." ".$vendor->last_name;
           $order->request_date = date("Y-m-d H:i A", strtotime($order->created_at));
+          $order->amount = number_format($order->amount);
+          
 
        }
     }
