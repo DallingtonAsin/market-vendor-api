@@ -23,6 +23,21 @@ class ShoppingOrderController extends Controller
         return formattedApiResponse::getJson($ShoppingOrders);
     }
 
+    public function getCustomerOrders(ShoppingOrderRepository $ShoppingOrderRepo, $id)
+    {
+        $ShoppingOrders = $ShoppingOrderRepo->getCustomerShoppingOrders($id);
+        return formattedApiResponse::getJson($ShoppingOrders);
+    }
+    public function getOrdersDetails(ShoppingOrderRepository $ShoppingOrderRepo, $id)
+    {
+        $ShoppingOrders = $ShoppingOrderRepo->getShoppingOrderDetails($id);
+        return formattedApiResponse::getJson($ShoppingOrders);
+    }
+
+    
+
+    
+
 
     public function pendingOrders(ShoppingOrderRepository $ShoppingOrderRepo)
     {

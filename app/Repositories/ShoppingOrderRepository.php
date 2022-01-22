@@ -115,6 +115,38 @@ class ShoppingOrderRepository{
          return $this->shopping_lists;
         }
 
+  // customer specific shopping orders
+  public function getCustomerShoppingOrders($customer_id){
+
+   $this->shopping_lists = ShoppingOrder::where('customer_id', $customer_id)->orderBy('id', 'desc')->get();
+    if(!empty($this->shopping_lists)){
+       foreach($this->shopping_lists as $order){
+          $customer = $this->getCustomerDetails($order->customer_id);
+          $vendor = $this->getVendorDetails($order->vendor_id);
+          $order->customer_name = $customer->first_name." ".$customer->last_name;
+          $order->phone_number = $customer->phone_number;
+          $order->vendor = $vendor->first_name." ".$vendor->last_name;
+       }
+    }
+    return $this->shopping_lists;
+   }
+
+   // fetch shopping order details
+  public function getShoppingOrderDetails($order_no){
+
+   $this->shopping_lists = ShoppingOrder::where('order_no', $order_no)->orderBy('id', 'desc')->get();
+    if(!empty($this->shopping_lists)){
+       foreach($this->shopping_lists as $order){
+          $customer = $this->getCustomerDetails($order->customer_id);
+          $vendor = $this->getVendorDetails($order->vendor_id);
+          $order->customer_name = $customer->first_name." ".$customer->last_name;
+          $order->phone_number = $customer->phone_number;
+          $order->vendor = $vendor->first_name." ".$vendor->last_name;
+       }
+    }
+    return $this->shopping_lists;
+   }
+
 
    private function getCustomerDetails($id){
       $customer = null;

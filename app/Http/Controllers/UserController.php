@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Company;
 use App\Helpers\ApiResponse;
 use App\Repositories\UserRepository;
+use App\Repositories\VendorRepository;
 use App\Helpers\formattedApiResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
@@ -129,6 +130,18 @@ public function index(UserRepository $userrepo)
 {
     $users = $userrepo->getUsers();
     return formattedApiResponse::getJson($users);
+}
+
+public function getVendors(VendorRepository $vendorRepo)
+{
+    $vendors = $vendorRepo->getVendors();
+    return formattedApiResponse::getJson($vendors);
+}
+
+public function fetchVendorDetails(VendorRepository $vendorRepo, $id)
+{
+    $vendors = $vendorRepo->getVendorDetails($id);
+    return formattedApiResponse::getJson($vendors);
 }
 
 /**

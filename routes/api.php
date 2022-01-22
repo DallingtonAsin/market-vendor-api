@@ -56,10 +56,13 @@ Route::group(['prefix' => 'customer', 'middleware' => ['auth:api-customers']], f
     Route::post('/change/profile-picture', [CustomerController::class, 'uploadProfilePicture']); // done
     
     Route::post('/payment/create', [PaymentController::class, 'create']); // done
-    Route::get('/notifications', [PaymentController::class, 'getNotifications']); // done
     Route::post('/account/topup', [PaymentController::class, 'topupUserAccount']); //done
     Route::get('/transactions', [PaymentController::class, 'getTransactionHistory']); // done
+    Route::get('/notifications', [PaymentController::class, 'getNotifications']); // done
     Route::post('/suggestion', [MailController::class, 'postCustomerSuggestion']); // done
+
+    Route::get('/orders/{id}', [ShoppingOrderController::class, 'getOrdersDetails']);
+
 
 });
 
@@ -86,4 +89,16 @@ Route::group(['middleware' => 'auth:api-users'], function(){
 Route::group(['prefix' => 'reports', 'middleware' => ['auth:api-users']], function(){
     Route::get('/', [ReportController::class, 'index']);
     Route::get('/system-audit', [ReportController::class, 'fetchLogs']);
+});
+
+
+Route::group(['prefix' => 'device', 'middleware' => ['auth:api-customers']], function(){
+
+    Route::get('/vendors', [UserController::class, 'getVendors']); 
+    Route::get('/vendors/{id}', [UserController::class, 'fetchVendorDetails']); 
+    Route::get('orders/customer/{id}', [ShoppingOrderController::class, 'getCustomerOrders']);
+
+    
+    
+
 });
