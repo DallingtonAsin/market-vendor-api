@@ -126,7 +126,7 @@ class ShoppingOrderController extends Controller
                 $order->order_no = ShoppingOrder::max('id') + 1;
                 $order->quantity = $quantity;
                 $order->amount = $amount;
-                $order->vendor_id = User::where('first_name', 'like', ''.$vendor.'')->value('id');
+                $order->vendor_id = User::where('first_name', 'like', '%'.$vendor.'%')->value('id');
                 $order->address = $address;
                 $order->customer_id = $customer_id;
                 $order->delivered_date = date('Y-m-d', strtotime($delivered_date));
