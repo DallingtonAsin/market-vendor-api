@@ -74,7 +74,6 @@ Route::group(['middleware' => 'auth:api-users'], function(){
     Route::get('/shopping-orders/pending', [ShoppingOrderController::class, 'pendingOrders']);
     Route::get('/shopping-orders/processed', [ShoppingOrderController::class, 'processedOrders']);
 
-
     Route::resources([
         'users' => UserController::class,
         'roles' => RoleController::class,
@@ -98,7 +97,10 @@ Route::group(['prefix' => 'device', 'middleware' => ['auth:api-customers']], fun
     Route::get('/vendors/{id}', [UserController::class, 'fetchVendorDetails']); 
     Route::get('orders/customer/{id}', [ShoppingOrderController::class, 'getCustomerOrders']);
 
-    
+    Route::resources([
+        'shopping-orders' => ShoppingOrderController::class,
+        'goods' => GoodsController::class,
+    ]);
     
 
 });
