@@ -101,17 +101,16 @@ class ShoppingOrderController extends Controller
             'customer_id' => 'required',
             'delivery_date' => 'required',
             'address' => 'required',
-            
+
         ]);
-        
+
+        if($validator->fails()){
+            $resp->statusCode = Globals::$STATUS_CODE_ERROR;
+            $resp->message = $validator->errors()->all();
+        }else{
+
         try{
-            
-            if($validator->fails()){
-                $resp->statusCode = Globals::$STATUS_CODE_ERROR;
-                $resp->message = $validator->errors()->all();
-            }
-            else{
-                
+           
                 $item = trim($request->input('item'));
                 $quantity = trim($request->input('quantity'));
                 $amount = floatval($quantity)*rand(1000,35000);
@@ -119,7 +118,7 @@ class ShoppingOrderController extends Controller
                 $customer_id = trim($request->input('customer_id'));
                 $delivered_date = trim($request->input('delivered_date'));
                 $address = trim($request->input('address'));
-                
+
                 
                 $order = new ShoppingOrder();
                 
@@ -131,7 +130,7 @@ class ShoppingOrderController extends Controller
                 $order->address = $address;
                 $order->customer_id = $customer_id;
                 $order->delivered_date = date('Y-m-d', strtotime($delivered_date));
-                
+
                 if($order->save()){
                     
                     $action =  "submitted new order";
@@ -146,14 +145,19 @@ class ShoppingOrderController extends Controller
                     $resp->statusCode = Globals::$STATUS_CODE_FAILED;
                     $resp->message = "Order could not be submited!";
                 }
-                
-            }
+            
+            
         } catch (\Exception $ex) {
             $resp->statusCode = Globals::$STATUS_CODE_ERROR;
             $resp->message = $message = $ex->getMessage();
         }
+    }
         
-        return response()->json($resp, 200);
+        $dataArr = array("code" => $resp->statusCode,
+        "message" => $resp->message,
+        "method" => $method);
+        Helper::LogRequest($request, $dataArr);
+        return response()->json($resp);
     }
     
     /**
