@@ -117,7 +117,7 @@ class ShoppingOrderController extends Controller
                 $amount = floatval($quantity)*rand(1000,35000);
                 $vendor = trim($request->input('vendor'));
                 $customer_id = trim($request->input('customer_id'));
-                $delivered_date = trim($request->input('delivered_date'));
+                $delivery_date = trim($request->input('delivery_date'));
                 $address = trim($request->input('address'));
                 
                 
@@ -130,7 +130,7 @@ class ShoppingOrderController extends Controller
                 $order->vendor_id = User::where('first_name', 'like', '%'.$vendor.'%')->value('id');
                 $order->address = $address;
                 $order->customer_id = $customer_id;
-                $order->delivered_date = date('Y-m-d', strtotime($delivered_date));
+                $order->delivery_date = date('Y-m-d', strtotime($delivery_date));
                 
                 if($order->save()){
                     
